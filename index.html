@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0033ff',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        .btn-soft-primary {
+            @apply bg-primary/10 text-primary duration-300 hover:bg-primary/20 rounded-md py-2 px-4;
+        }        
+    </style>
+
+    <title>Logs da API</title>
+</head>
+
+<body class="min-h-screen flex flex-col gap-4 justify-center items-center px-4">
+
+    <strong class="text-slate-600 text-3xl text-center max-w-[400px] w-full mb-8">Seja bem vindo (a), escolha oque
+        deseja ver:</strong>
+
+    <a href="/cadastros.html" class="btn-soft-primary text-center max-w-[400px] w-full">
+        Cadastros
+    </a>
+    <a href="/lances.html" class="btn-soft-primary text-center max-w-[400px] w-full">
+        Lances
+    </a>
+
+</body>
+
+</html>

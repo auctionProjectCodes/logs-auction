@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0033ff',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/cadastros.js" defer></script>
+
+    <style type="text/tailwindcss">
+        .safe-area {
+            @apply max-w-[1200px] w-full mx-auto px-2 md:px-0;
+        }
+
+        .btn-primary {
+            @apply bg-primary text-white duration-300 hover:opacity-70 rounded-md py-2 px-4 disabled:opacity-50;
+        }        
+
+        .btn-soft-primary {
+            @apply bg-primary/10 text-primary duration-300 hover:bg-primary/20 rounded-md py-2 px-4;
+        }        
+
+        .table-base-tr {
+            @apply odd:bg-slate-100/70 even:bg-slate-200/30 cursor-pointer duration-300 hover:bg-slate-200;
+        }
+
+        .header.active {
+            @apply bg-primary/10 backdrop-blur border-b;
+        }
+    </style>
+
+    <title>Cadastros</title>
+</head>
+
+<body class="safe-area py-12 pt-24">
+    <nav class="fixed top-0 left-0 right-0 py-4 w-full flex justify-center items-center gap-12 duration-300 header">
+        <button class="btn-primary" disabled>Cadastros</button>
+        <a href="/lances.html" class="text-primary hover:underline">Lances</a>
+    </nav>
+
+    <div id="content"></div>
+</body>
+
+</html>
