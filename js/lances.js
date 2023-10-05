@@ -45,31 +45,29 @@ const renderTable = (title, details) => {
 
   document.querySelector("#content").innerHTML += `
         <div class="p-4 md:p-8 bg-slate-100 rounded-xl mt-12">
-            <strong class="text-3xl text-slate-600">${title}</strong>
+            <strong class="text-lg md:text-xl text-slate-600">${title}</strong>
             
-            <div class="overflow-x-auto mt-8">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="border-r min-w-[220px] md:min-w-[0px] md:w-6/12 px-8 md:px-0 py-4">Site</th>
-                            <th class="border-r min-w-[220px] md:min-w-[0px] md:w-6/12 px-8 md:px-0 py-4">Lances</th>
-                        </tr>
-                    </thead>
+            <table class="w-full mt-8">
+                <thead>
+                    <tr class="border-b">
+                        <th class="px-2 py-4 break-words text-xs md:text-base">Site</th>
+                        <th class="px-2 py-4 break-words text-xs md:text-base">Lances</th>
+                    </tr>
+                </thead>
 
-                    <tbody id="body-${i}"></tbody>
-                </table>
-            </div>
+                <tbody id="body-${i}"></tbody>
+            </table>
         </div>
     `;
 
   details.forEach((detail) => {
     document.querySelector(`#body-${i}`).innerHTML += `
             <tr class="table-base-tr">
-                <td class="min-w-[220px] md:min-w-[0px] md:w-6/12 px-8 md:px-0 text-center py-4">${detail.site.slice(
+                <td class="px-2 py-4 text-center break-words text-xs md:text-base w-6/12">${detail.site.slice(
                   0,
                   detail.site.length - 3
                 )}</td>
-                <td class="min-w-[220px] md:min-w-[0px] md:w-6/12 px-8 md:px-0 text-center py-4">${
+                <td class="px-2 py-4 text-center break-words text-xs md:text-base w-6/12">${
                   detail.lances
                 }</td>
             </tr>
@@ -84,7 +82,7 @@ const getData = async () => {
 
   const data = res.data;
 
-  const resultado = [];
+  const result = [];
 
   for (const date in data[0]) {
     if (date !== "Site") {
@@ -103,9 +101,18 @@ const getData = async () => {
       const year = dateFormatted.getFullYear();
       title = `${day}/${month}/${year}`;
 
-      renderTable(title, details);
+      result.push({ title, details });
     }
   }
+
+  result.map((item) => {
+    return {
+      ...item,
+      details: item.details.sort((a, b) => b.lances - a.lances),
+    };
+  });
+
+  result.forEach((item) => renderTable(item.title, item.details));
 
   i = 0;
 };

@@ -44,37 +44,35 @@ const renderTable = (title, details) => {
   if (i === 1) renderRefetchButton();
 
   document.querySelector("#content").innerHTML += `
-        <div class="p-4 md:p-8 bg-slate-100 rounded-xl mt-12">
-            <strong class="text-3xl text-slate-600">${title}</strong>
+        <div class="px-2 py-8 md:px-8 bg-slate-100 rounded-xl mt-12">
+            <strong class="text-lg md:text-xl text-slate-600">${title}</strong>
             
-            <div class="overflow-x-auto mt-8">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="border-r min-w-[220px] md:min-w-[0px] md:w-[33,333333333%] px-8 md:px-0 py-4">Site</th>
-                            <th class="border-r min-w-[220px] md:min-w-[0px] md:w-[33,333333333%] px-8 md:px-0 py-4">Documentos</th>
-                            <th class="min-w-[220px] md:min-w-[0px] md:w-[33,333333333%] px-8 md:px-0 py-4">Cadastros</th>
-                        </tr>
-                    </thead>
+            <table class="w-full mt-8">
+                <thead>
+                    <tr>
+                        <th class="px-2 py-4 break-words text-xs md:text-base">Site</th>
+                        <th class="px-2 py-4 break-words text-xs md:text-base">Cadastros</th>
+                        <th class="px-2 py-4 break-words text-xs md:text-base">Documentos</th>
+                    </tr>
+                </thead>
 
-                    <tbody id="body-${i}"></tbody>
-                </table>
-            </div>
+                <tbody id="body-${i}"></tbody>
+            </table>
         </div>
     `;
 
   details.forEach((detail) => {
     document.querySelector(`#body-${i}`).innerHTML += `
             <tr class="table-base-tr">
-                <td class="min-w-[220px] md:min-w-[0px] md:w-[33,333333333%] px-8 md:px-0 text-center py-4">${detail.site.slice(
+                <td class="px-2 py-4 text-center break-words text-xs md:text-base">${detail.site.slice(
                   0,
                   detail.site.length - 3
                 )}</td>
-                <td class="min-w-[220px] md:min-w-[0px] md:w-[33,333333333%] px-8 md:px-0 text-center py-4">${
-                  detail.docs
-                }</td>
-                <td class="min-w-[220px] md:min-w-[0px] md:w-[33,333333333%] px-8 md:px-0 text-center py-4">${
+                <td class="px-2 py-4 text-center break-words text-xs md:text-base">${
                   detail.total
+                }</td>
+                <td class="px-2 py-4 text-center break-words text-xs md:text-base">${
+                  detail.docs
                 }</td>
             </tr>
         `;
@@ -111,8 +109,17 @@ const getData = async () => {
       tmp.push({ site, docs, total });
     });
 
-    renderTable(title, tmp);
+    data.push({ title, details: tmp });
   });
+
+  data.map((item) => {
+    return {
+      ...item,
+      details: item.details.sort((a, b) => b.total - a.total),
+    };
+  });
+
+  data.forEach((item) => renderTable(item.title, item.details));
 
   i = 0;
 };
