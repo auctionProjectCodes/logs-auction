@@ -79,6 +79,13 @@ const renderTable = (title, details) => {
   });
 };
 
+const handleURL = (e) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const page = urlParams.get("pagina") || 1;
+
+  window.location.href = `${e.dataset.url}?pagina=${page}`;
+};
+
 const updateData = () => {
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);

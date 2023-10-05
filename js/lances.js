@@ -84,6 +84,13 @@ const updateData = () => {
   window.location.href = url.toString();
 };
 
+const handleURL = (e) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const page = urlParams.get("pagina") || 1;
+
+  window.location.href = `${e.dataset.url}?pagina=${page}`;
+};
+
 const getData = async (pageParam) => {
   try {
     const url = new URL(window.location.href);
@@ -121,7 +128,12 @@ const getData = async (pageParam) => {
       }
     }
 
-    result.sort((a, b) => new Date(b.title) - new Date(a.title));
+    const currentDate = new Date();
+    result.sort((a, b) => {
+      const differenceA = Math.abs(a.title - currentDate);
+      const differenceB = Math.abs(b.title - currentDate);
+      return differenceA - differenceB;
+    });
 
     result.map((item) => {
       return {
