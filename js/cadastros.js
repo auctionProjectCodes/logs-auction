@@ -14,7 +14,7 @@ const handleDigits = (value) => {
 const renderRefetchButton = () => {
   document.querySelector("#content").innerHTML = `
     <div class="w-full flex">
-      <button class="ml-auto btn-soft-primary" onClick="getData()">Atualizar dados</button>
+      <button class="ml-auto btn-soft-primary" onClick="updateData()">Atualizar dados</button>
     </div>
   `;
 };
@@ -79,15 +79,24 @@ const renderTable = (title, details) => {
   });
 };
 
-const getData = async () => {
+const updateData = () => {
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
-  const pagina = params.get("pagina");
+
+  params.set("pagina", 1);
+  url.search = params.toString();
+  window.location.href = url.toString();
+};
+
+const getData = async (pageParam) => {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const page = pageParam || params.get("pagina");
 
   try {
     renderSkeleton();
     const res = await axios.get(
-      `https://bot.hostingbr.cloud/api/cadastros${pagina > 1 ? pagina : ""}`
+      `https://bot.hostingbr.cloud/api/cadastros${page > 1 ? page : ""}`
     );
     removeSkeleton();
 
@@ -119,6 +128,8 @@ const getData = async () => {
       data.push({ title, details: tmp });
     });
 
+    data.sort((a, b) => new Date(b.title) - new Date(a.title));
+
     data.map((item) => {
       return {
         ...item,
@@ -132,7 +143,7 @@ const getData = async () => {
     document.querySelector("#content").innerHTML = `
       <div class="flex flex-col items-center mt-48">
         <p>Nenhum resultado encontrado</p>
-        <button class="btn-soft-primary mt-8" onClick="getData()">Atualizar dados</button>
+        <button class="btn-soft-primary mt-8" onClick="updateData()">Atualizar dados</button>
       </div>
     `;
   }
