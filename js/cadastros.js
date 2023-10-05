@@ -80,46 +80,62 @@ const renderTable = (title, details) => {
 };
 
 const getData = async () => {
-  renderSkeleton();
-  const res = await axios.get("https://bot.hostingbr.cloud/api/cadastros");
-  removeSkeleton();
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const pagina = params.get("pagina");
 
-  const data = [];
+  try {
+    renderSkeleton();
+    const res = await axios.get(
+      `https://bot.hostingbr.cloud/api/cadastros${pagina > 1 ? pagina : ""}`
+    );
+    removeSkeleton();
 
-  Object.keys(res.data).forEach((key) => {
-    let title = "";
+    const data = [];
 
-    if (key === "aggregated") {
-      title = "Resumo";
-    } else {
-      const dateFormatted = new Date(key);
-      dateFormatted.setDate(dateFormatted.getDate() + 1);
-      const day = handleDigits(dateFormatted.getDate());
-      const month = handleDigits(dateFormatted.getMonth() + 1);
-      const year = dateFormatted.getFullYear();
-      title = `${day}/${month}/${year}`;
-    }
+    Object.keys(res.data).forEach((key) => {
+      let title = "";
 
-    const tmp = [];
+      if (key === "aggregated") {
+        title = "Resumo";
+      } else {
+        const dateFormatted = new Date(key);
+        dateFormatted.setDate(dateFormatted.getDate() + 1);
+        const day = handleDigits(dateFormatted.getDate());
+        const month = handleDigits(dateFormatted.getMonth() + 1);
+        const year = dateFormatted.getFullYear();
+        title = `${day}/${month}/${year}`;
+      }
 
-    Object.keys(res.data[key]).forEach((site) => {
-      const docs = res.data[key][site].docs_cad;
-      const total = res.data[key][site].total_cadastros;
+      const tmp = [];
 
-      tmp.push({ site, docs, total });
+      Object.keys(res.data[key]).forEach((site) => {
+        const docs = res.data[key][site].docs_cad;
+        const total = res.data[key][site].total_cadastros;
+
+        tmp.push({ site, docs, total });
+      });
+
+      data.push({ title, details: tmp });
     });
 
-    data.push({ title, details: tmp });
-  });
+    data.map((item) => {
+      return {
+        ...item,
+        details: item.details.sort((a, b) => b.total - a.total),
+      };
+    });
 
-  data.map((item) => {
-    return {
-      ...item,
-      details: item.details.sort((a, b) => b.total - a.total),
-    };
-  });
-
-  data.forEach((item) => renderTable(item.title, item.details));
+    data.forEach((item) => renderTable(item.title, item.details));
+  } catch (e) {
+    removeSkeleton();
+    document.querySelector("#content").innerHTML = `
+      <div class="flex flex-col items-center mt-48">
+        <p>Nenhum resultado encontrado</p>
+        <button class="btn-soft-primary mt-8" onClick="getData()">Atualizar dados</button>
+      </div>
+    `;
+  }
 
   i = 0;
 };

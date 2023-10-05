@@ -76,45 +76,61 @@ const renderTable = (title, details) => {
 };
 
 const getData = async () => {
-  renderSkeleton();
-  const res = await axios.get("https://bot.hostingbr.cloud/api/lances");
-  removeSkeleton();
+  try {
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    const pagina = params.get("pagina");
 
-  const data = res.data;
+    renderSkeleton();
+    const res = await axios.get(
+      `https://bot.hostingbr.cloud/api/lances${pagina > 1 ? pagina : ""}`
+    );
+    removeSkeleton();
 
-  const result = [];
+    const data = res.data;
 
-  for (const date in data[0]) {
-    if (date !== "Site") {
-      const details = [];
+    const result = [];
 
-      for (const obj of data) {
-        const site = obj["Site"];
-        const lances = parseInt(obj[date]);
-        details.push({ site, lances });
+    for (const date in data[0]) {
+      if (date !== "Site") {
+        const details = [];
+
+        for (const obj of data) {
+          const site = obj["Site"];
+          const lances = parseInt(obj[date]);
+          details.push({ site, lances });
+        }
+
+        const dateFormatted = new Date(date);
+        dateFormatted.setDate(dateFormatted.getDate() + 1);
+        const day = handleDigits(dateFormatted.getDate());
+        const month = handleDigits(dateFormatted.getMonth() + 1);
+        const year = dateFormatted.getFullYear();
+        title = `${day}/${month}/${year}`;
+
+        result.push({ title, details });
       }
-
-      const dateFormatted = new Date(date);
-      dateFormatted.setDate(dateFormatted.getDate() + 1);
-      const day = handleDigits(dateFormatted.getDate());
-      const month = handleDigits(dateFormatted.getMonth() + 1);
-      const year = dateFormatted.getFullYear();
-      title = `${day}/${month}/${year}`;
-
-      result.push({ title, details });
     }
+
+    result.map((item) => {
+      return {
+        ...item,
+        details: item.details.sort((a, b) => b.lances - a.lances),
+      };
+    });
+
+    result.forEach((item) => renderTable(item.title, item.details));
+
+    i = 0;
+  } catch (e) {
+    removeSkeleton();
+    document.querySelector("#content").innerHTML = `
+      <div class="flex flex-col items-center mt-48">
+        <p>Nenhum resultado encontrado</p>
+        <button class="btn-soft-primary mt-8" onClick="getData()">Atualizar dados</button>
+      </div>
+    `;
   }
-
-  result.map((item) => {
-    return {
-      ...item,
-      details: item.details.sort((a, b) => b.lances - a.lances),
-    };
-  });
-
-  result.forEach((item) => renderTable(item.title, item.details));
-
-  i = 0;
 };
 
 getData();
