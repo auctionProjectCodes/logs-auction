@@ -61,12 +61,22 @@ const renderTable = (title, details) => {
     `;
 
   details.forEach((detail) => {
+    let urlSite = detail.site;
+    let desk = "";
+
+    if (urlSite.includes(" ")) {
+      const parts = detail.site.split(" - ");
+      desk = parts[0];
+      urlSite = parts[1];
+    }
+
     document.querySelector(`#body-${i}`).innerHTML += `
             <tr class="table-base-tr">
-                <td class="px-2 py-4 text-center break-words text-xs md:text-base w-6/12">${detail.site.slice(
-                  0,
-                  detail.site.length - 3
-                )}</td>
+                <td class="px-2 py-4 text-center break-words text-xs md:text-base w-6/12">
+                  ${
+                    desk && desk + " - "
+                  }<a class="text-slate-600 md:hover:text-primary md:hover:underline" href="http://${urlSite}" target="_blank">${urlSite}</a>
+                </td>
                 <td class="px-2 py-4 text-center break-words text-xs md:text-base w-6/12">${
                   detail.lances
                 }</td>
